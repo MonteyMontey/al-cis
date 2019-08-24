@@ -9,7 +9,7 @@ run:
 	PROMETHEUS_PORT=4444 GRPC_PORT=5000 MASTER_ADDRESS='localhost:3000' HOST='localhost' env/bin/python main.py
 
 image:
-	docker build -t codealife/al-cis .
+	docker build -t al-cis .
 
 checkformat:
 	env/bin/pycodestyle $$(ls | grep '.*\.py' | grep -v '.*pb2.*')
@@ -19,7 +19,10 @@ autoformat:
 
 docker-push:
 	echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-	docker push codealife/al-cis:latest
+	docker tag al-cis monteymontey/al-cis:latest
+	docker push monteymontey/al-cis:latest
 
-make test:
-	env/bin/pytest -vv
+docker-push-dev:
+	echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+	docker tag al-cis monteymontey/al-cis-dev:latest
+	docker push monteymontey/al-cis-dev:latest
