@@ -17,15 +17,17 @@ checkformat:
 autoformat:
 	env/bin/autopep8 -ia $$(ls | grep '.*\.py' | grep -v '.*pb2.*')
 
+TAG = latest
+
 docker-push:
 	echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-	docker tag al-cis monteymontey/al-cis:latest
-	docker push monteymontey/al-cis:latest
+	docker tag al-cis monteymontey/al-cis:$(TAG)
+	docker push monteymontey/al-cis:$(TAG)
 
 docker-push-dev:
 	echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-	docker tag al-cis monteymontey/al-cis-dev:latest
-	docker push monteymontey/al-cis-dev:latest
+	docker tag al-cis monteymontey/al-cis-dev:$(TAG)
+	docker push monteymontey/al-cis-dev:$(TAG)
 
 deploy:
 	bash deploy.sh 34.65.119.227 35.233.115.56
