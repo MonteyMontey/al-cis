@@ -8,6 +8,13 @@ services:
 git:
   submodules: false
 
+before_install:
+  - openssl aes-256-cbc -K $encrypted_20054d4e959b_key -iv $encrypted_20054d4e959b_iv 
+    -in deploy_key.enc -out ./deploy_key -d
+  - eval "$(ssh-agent -s)"
+  - chmod 600 ./deploy_key
+  - ssh-add ./deploy_key
+
 install:
   - make dep
 
@@ -15,7 +22,13 @@ script:
   - make checkformat
 
 deploy:
-  provider: script
-  script: make image docker-push
-  on:
-    branch: master
+  - provider: script
+    script: make -e TAG=v0.1 image docker-push-dev deploy-dev
+    on:
+      branch: dev
+      condition: $TRAVIS_PULL_REQUEST = "false"
+  - provider: script
+    script: make -e TAG=v0.2 image docker-push deploy
+    on:
+      branch: master
+      condition: $TRAVIS_PULL_REQUEST = "false" # we don't want to deploy already at pull request but wait until it's merged
